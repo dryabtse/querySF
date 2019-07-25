@@ -8,7 +8,7 @@ import os
 URL='https://mongodb.my.salesforce.com'
 TOKEN_SECRET_NAME = 'SF_TOKEN'
 TOKEN = keyring.get_password("system", TOKEN_SECRET_NAME)
-USERNAME = 'dmitry.ryabtsev@mongodb.com'
+USERNAME = 'user.name@mongodb.com'
 PASSWORD = keyring.get_password("system", USERNAME)
 QUERY_FIELDS = "CaseNumber, Status, Priority, Owner__c, Subject"
 QUERY_PREFIX = "SELECT " + QUERY_FIELDS + " FROM Case WHERE CaseNumber IN ("
