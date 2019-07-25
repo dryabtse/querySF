@@ -47,6 +47,8 @@ def printQueryResults(res):
                 recPrintOdict(r)
                 print("\n=============================================================================\n")
 
+# Some of the object keys retrieved from SF have ugly names, this function can be used to replace them with 
+# something more sensible
 def keyValueProcessor(k, v):
     vNew = ""
     kNew = ""
@@ -65,6 +67,7 @@ def keyValueProcessor(k, v):
     
     return kNew,vNew
 
+# Check if the ticket number is matching the expected pattern
 def sanitizeTicketArgument(tkArg):
     good = True
     if (len(tkArg) != 8):
@@ -75,6 +78,7 @@ def sanitizeTicketArgument(tkArg):
 
     return good
         
+# To process the command line arguments
 def processArguments():
     parser = argparse.ArgumentParser(description='Query tickets information from SalesForce')
     parser.add_argument('tickets', metavar='T', type=str, nargs='+', help='8-digit ticket number')
@@ -106,7 +110,6 @@ def processArguments():
     return inClause, statusFilter
 
 # Status selector for --status option
-
 def OPN():
     return Status.OPN
 def CSD():
