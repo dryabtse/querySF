@@ -8,9 +8,10 @@ import os
 URL='https://mongodb.my.salesforce.com'
 TOKEN_SECRET_NAME = 'SF_TOKEN'
 TOKEN = keyring.get_password("system", TOKEN_SECRET_NAME)
-USERNAME = 'user.name@mongodb.com'
+USERNAME = 'dmitry.ryabtsev@mongodb.com'
 PASSWORD = keyring.get_password("system", USERNAME)
 QUERY_FIELDS = "CaseNumber, Status, Priority, Owner__c, Subject"
+QUERY_PREFIX = "SELECT " + QUERY_FIELDS + " FROM Case WHERE CaseNumber IN ("
 STATUS_FILTER = "AND Status IN ("
 
 class Status():
@@ -138,8 +139,7 @@ def main():
     
     tickets,statuses = processArguments()
 
-    queryPrefix = "SELECT " + QUERY_FIELDS + " FROM Case WHERE CaseNumber IN ("
-    query = queryPrefix + tickets + ") "
+    query = QUERY_PREFIX + tickets + ") "
     if len(statuses) > 0:
         query = query + STATUS_FILTER + statuses + ")"
 
