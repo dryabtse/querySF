@@ -14,7 +14,7 @@ USERNAME = 'user.name@mongodb.com'
 PASSWORD = keyring.get_password("system", USERNAME)
 QUERY_FIELDS = "CaseNumber, Status, Priority, Owner__c, Subject"
 QUERY_PREFIX = "SELECT " + QUERY_FIELDS + " FROM Case WHERE CaseNumber IN ("
-STATUS_FILTER = "AND Status IN ("
+QUERY_STATUS_FILTER = "AND Status IN ("
 QUERY_SUFFIX = "ORDER BY CaseNumber"
 
 class Status():
@@ -61,6 +61,7 @@ def keyValueProcessor(k, v):
     kNew = ""
     if k == "Owner__c":
         kNew = "Owner"
+        # Construct the owner first name + last name and truncate the rest
         for word in v.split(" "):
             if word == "[<a":
                 break
@@ -159,7 +160,7 @@ def main():
 
     query = QUERY_PREFIX + tickets + ") "
     if len(statuses) > 0:
-        query = query + STATUS_FILTER + statuses + ") " + QUERY_SUFFIX
+        query = query + QUERY_STATUS_FILTER + statuses + ") " + QUERY_SUFFIX
 
     try:
         sf = Salesforce(instance_url=URL, username=USERNAME, password=PASSWORD, security_token=TOKEN)
