@@ -5,6 +5,8 @@ import keyring
 import sys
 import os
 
+PROCESS_KV = True
+
 URL='https://mongodb.my.salesforce.com'
 TOKEN_SECRET_NAME = 'SF_TOKEN'
 TOKEN = keyring.get_password("system", TOKEN_SECRET_NAME)
@@ -52,6 +54,9 @@ def printQueryResults(res):
 # Some of the object keys retrieved from SF have ugly names, this function can be used to replace them with 
 # something more sensible
 def keyValueProcessor(k, v):
+    if PROCESS_KV == False:
+        return k,v
+
     vNew = ""
     kNew = ""
     if k == "Owner__c":
