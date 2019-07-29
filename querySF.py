@@ -7,11 +7,14 @@ import os
 
 PROCESS_KV = True
 
+# Credentials
 URL='https://mongodb.my.salesforce.com'
 TOKEN_SECRET_NAME = 'SF_TOKEN'
 TOKEN = keyring.get_password("system", TOKEN_SECRET_NAME)
 USERNAME = 'user.name@mongodb.com'
 PASSWORD = keyring.get_password("system", USERNAME)
+
+# SOQL query parts
 QUERY_FIELDS = "CaseNumber, Status, Priority, Owner__c, Subject"
 QUERY_PREFIX = "SELECT " + QUERY_FIELDS + " FROM Case WHERE CaseNumber IN ("
 QUERY_STATUS_FILTER = "AND Status IN ("
@@ -61,7 +64,7 @@ def keyValueProcessor(k, v):
     kNew = ""
     if k == "Owner__c":
         kNew = "Owner"
-        # Construct the owner first name + last name and truncate the rest
+        # Construct the owner's first name + last name and truncate the rest
         for word in v.split(" "):
             if word == "[<a":
                 break
@@ -158,6 +161,7 @@ def main():
     
     tickets,statuses = processArguments()
 
+    # SOQL query assembly
     query = QUERY_PREFIX + tickets + ") "
     if len(statuses) > 0:
         query = query + QUERY_STATUS_FILTER + statuses + ") " + QUERY_SUFFIX
