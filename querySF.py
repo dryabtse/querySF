@@ -13,6 +13,7 @@ PASSWORD = keyring.get_password("system", USERNAME)
 QUERY_FIELDS = "CaseNumber, Status, Priority, Owner__c, Subject"
 QUERY_PREFIX = "SELECT " + QUERY_FIELDS + " FROM Case WHERE CaseNumber IN ("
 STATUS_FILTER = "AND Status IN ("
+QUERY_SUFFIX = "ORDER BY CaseNumber"
 
 class Status():
     OPN = "'Open'"
@@ -21,7 +22,8 @@ class Status():
     WFD = "'Waiting for Development'"
     INP = "'In Progress'"
     RES = "'Resolved'"
-    ALL = OPN + ", " + CSD + ", " + WFC + ", " + WFD + ", " + INP + ", " + RES
+    HLD = "'On Hold'"
+    ALL = OPN + ", " + CSD + ", " + WFC + ", " + WFD + ", " + INP + ", " + RES + ", " + HLD
 
 # Recursively print the resultset ObjectDict
 def recPrintOdict(odict, indent=0):
@@ -107,6 +109,11 @@ def processArguments():
 
         statusFilter = statusFilter + statusSelector(args.status[0])
 
+        if statusFilter == "Invalid":
+            print("ERROR: An incorrect status value has been specified: %s" % args.status[0])
+            parser.print_help()
+            sys.exit()
+
     return inClause, statusFilter
 
 # Status selector for --status option
@@ -122,6 +129,8 @@ def WFD():
     return Status.WFD
 def RES():
     return Status.RES
+def HLD():
+    return Status.HLD
 def ALL():
     return Status.ALL
 
@@ -133,6 +142,7 @@ def statusSelector(input):
         "WFC": WFC,
         "WFD": WFD,
         "RES": RES,
+        "HLD": HLD,
         "ALL": ALL
     }
     func = switcher.get(input, lambda: "Invalid")
@@ -144,7 +154,7 @@ def main():
 
     query = QUERY_PREFIX + tickets + ") "
     if len(statuses) > 0:
-        query = query + STATUS_FILTER + statuses + ")"
+        query = query + STATUS_FILTER + statuses + ") " + QUERY_SUFFIX
 
     try:
         sf = Salesforce(instance_url=URL, username=USERNAME, password=PASSWORD, security_token=TOKEN)
